@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tafeltrainer & Braintrainer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f8ff;
+      padding: 20px;
+    }
+    #question {
+      font-size: 2em;
+      margin: 20px;
+    }
+    input, button {
+      font-size: 1.5em;
+      padding: 10px;
+    }
+    #feedback {
+      margin-top: 15px;
+      font-size: 1.2em;
+    }
+    #score {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Tafeltrainer & Braintrainer 🧠</h1>
+  <p>Kies een spel en train je brein!</p>
+  <label for="tafel">Tafel van: </label>
+  <select id="tafel">
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+  <button onclick="startSpel()">Start Tafeltrainer</button>
+  <button onclick="startBraintrainer()">Start Braintrainer</button>
+
+  <div id="spel" style="display:none">
+    <div id="question"></div>
+    <input type="number" id="antwoord" placeholder="Jouw antwoord" />
+    <button onclick="checkAntwoord()">Controleer</button>
+    <div id="feedback"></div>
+    <div id="score"></div>
+  </div>
+
+  <script>
+    let tafel = 2;
+    let getal = 1;
+    let score = 0;
+    let mode = "tafel";
+
+    function startSpel() {
+      mode = "tafel";
+      score = 0;
+      tafel = parseInt(document.getElementById("tafel").value);
+      getal = Math.floor(Math.random() * 10) + 1;
+      document.getElementById("spel").style.display = "block";
+      document.getElementById("feedback").innerText = "";
+      updateScore();
+      stelVraag();
+    }
+
+    function startBraintrainer() {
+      mode = "brain";
+      score = 0;
+      document.getElementById("spel").style.display = "block";
+      document.getElementById("feedback").innerText = "";
+      updateScore();
+      stelVraag();
+    }
+
+    function stelVraag() {
+      if (mode === "tafel") {
+        getal = Math.floor(Math.random() * 10) + 1;
+        document.getElementById("question").innerText = `${tafel} x ${getal} = ?`;
+      } else {
+        const a = Math.floor(Math.random() * 50);
+        const b = Math.floor(Math.random() * 50);
+        const op = ["+", "-", "x"][Math.floor(Math.random() * 3)];
+        getal = { a, b, op };
+        document.getElementById("question").innerText = `${a} ${op} ${b} = ?`;
+      }
+      document.getElementById("antwoord").value = "";
+    }
+
+    function checkAntwoord() {
+      const antwoord = parseInt(document.getElementById("antwoord").value);
+      let juist;
+      if (mode === "tafel") {
+        juist = tafel * getal;
+      } else {
+        const { a, b, op } = getal;
+        juist = op === "+" ? a + b : op === "-" ? a - b : a * b;
+      }
+
+      if (antwoord === juist) {
+        score++;
+        document.getElementById("feedback").innerText = "Goed zo! 🎉";
+      } else {
+        document.getElementById("feedback").innerText = `Oeps! Het juiste antwoord is ${juist}.`;
+      }
+      updateScore();
+      setTimeout(stelVraag, 1500);
+    }
+
+    function updateScore() {
+      let categorie;
+      if (score < 5) categorie = "Beginner";
+      else if (score < 10) categorie = "Groeier";
+      else if (score < 15) categorie = "Denker";
+      else categorie = "Breinbaas!";
+      document.getElementById("score").innerText = `Score: ${score} (${categorie})`;
+    }
+  </script>
+</body>
+</html>
